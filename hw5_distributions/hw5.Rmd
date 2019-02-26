@@ -1,0 +1,58 @@
+---
+title: "homework5"
+author: "Tatiana Mamonova"
+date: '27 февраля 2019 г '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ca)
+```
+5.1
+Используйте все переменные кроме переменных Shop, WordDE и Category, чтобы построить MCA. Нарисуйте все наблюдения, раскрасьте их по переменной Category и добавьте доверительные эллипсы. Сверху нанесите переменные из получившейся модели MCA. Получившийся график ggplot запустите в консоль
+
+```{r}
+chairs <- read.csv("https://raw.githubusercontent.com/agricolamz/2019_data_analysis_for_linguists/master/data/students/tatianamamonova/hw5_CA_MCA/hw5_chairs.csv")
+MCA <- MASS::mca(chairs[,-c(1:3)])
+chairs <- cbind(chairs, MCA$rs)
+variables <- as_data_frame(MCA$cs)
+variables$var_names <- rownames(MCA$cs)
+chairs %>% 
+  ggplot(aes(`1`, `2`))+
+  geom_point(aes(color = Category))+
+  stat_ellipse(aes(color = Category))+
+  geom_text(data = variables, aes(`1`, `2`, label = var_names))+
+  theme_bw()+
+  scale_x_continuous(limits = c(-0.015, 0.019))
+
+```
+5.2
+
+Кажется, что к категории Sessel относится меньше объектов, чем к категории Stuhl, при этом в обе категории включены одинаковые материалы, например, кожа При этом полиамид, скорее всего, относится к Sessel. А остальное не видно:(
+
+5.3
+Cкачайте данные, содержащие 11 базовых цветов в разных подкорпусах Corpus of Contemporary American English (Davies 2008 - ). Учитывались только адъективные употребления. Постройте CA и нарисуйте биплот с переменными из столбцов и строчек (без стрелочек). Получившийся график ggplot запустите в консоль.
+
+```{r}
+clrs <- read.csv("https://github.com/agricolamz/2019_data_analysis_for_linguists/raw/master/data/students/tatianamamonova/hw5_CA_MCA/hw5_colreg.csv")
+rownames(clrs) <- clrs$colors
+ca <- ca(clrs[-5])
+clrs_col <- data.frame(ca$colcoord)
+clrs_col$rows <- rownames(ca$colcoord)
+clrs_row <- data.frame(ca$rowcoord)
+clrs_row$rows <- rownames(ca$rowcoord)
+clrs_col %>% 
+  ggplot(aes(Dim1, Dim2, label = rows))+
+  geom_text(color = "blue")+
+  geom_text(data = clrs_row, color = "red")+
+  theme_bw()+
+  labs(x = "Dim1",
+       y = "Dim2")
+
+
+```
+
+5.4
+На основе графика видно, что в разговорном стиле чаще всего употребляются прилагательные "black" и "white", в прессе - "green", "red" и "orange", а в художественной литературе - все остальные цвета. В академическом стиле прилагательные, обозначающие какие-либо цвета кроме черного и белого, встречаются крайне редко.
