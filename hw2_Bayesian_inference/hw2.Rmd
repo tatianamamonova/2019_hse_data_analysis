@@ -1,0 +1,35 @@
+---
+title: "hw2"
+author: "Tatiana Mamonova"
+date: '26 декабря 2018 г '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+df <- read.csv('hw2_phoible.csv')
+```
+
+##2.1
+Посчитайте долю, которую составляет согласные от всего фонологического набора каждого языка и выведите в консоль название языка, в котором эта доля максимальна
+
+```{r cars}
+df$count<- df$consonants/df$phonemes
+df[order(df$count, decreasing=TRUE),]->
+  df 
+print(df$language[1])
+```
+
+## 2.2 
+Проведите байесовский апдейт наблюдений каждого языка, используя в качестве априорного распределения бета распределение с параметрами α = 9.300246, и β = 4.4545. Посчитайте модуль разницы между апостериорной долей и изначальной долей представленной в данных. В консоль выведите 6 языков с наибольшей разницей.
+```{r pressure, echo=FALSE}
+df$density <- dbeta(df$count, shape1 = 9.300246, shape2 = 4.4545)
+df$mod <-Mod(df$count - df$density) 
+###Скорее всего, тут надо было что-то другое считать, но я плохо разобралась, что и как:(
+df[order(df$mod, decreasing=TRUE),]->
+  df 
+print(df$language[1:6])
+
+```
+
