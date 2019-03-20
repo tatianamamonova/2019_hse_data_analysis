@@ -1,0 +1,41 @@
+---
+title: "hw3"
+author: "Tatiana Mamonova"
+date: '20 марта 2019 г '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## 3.1
+```{r }
+df <- read_csv("https://raw.githubusercontent.com/agricolamz/2019_data_analysis_for_linguists/master/data/students/tatianamamonova/hw3_Bayesian_inference/hw3_phoible.csv")
+prod(dnorm(df$consonants, mean = 22, sd = 6))
+```
+
+## 3.2
+
+```{r pressure, echo=FALSE}
+df <- read_csv("https://raw.githubusercontent.com/agricolamz/2019_data_analysis_for_linguists/master/data/letter_frequency.csv")%>% 
+  gather(key = language, value = prob, French:Finnish) %>% 
+  spread(key = letter, value = prob) %>% 
+  mutate(likelihood = m*o*s*t)
+bayes_update <- data_frame(old = df$language,
+           prior = 1/length(old),
+           likelihood = df$likelihood,
+           product = prior*likelihood,
+           posterior = product/sum(product))
+max(bayes_update$posterior)
+
+```
+## 3.3
+```{r}
+df <- read_csv("https://raw.githubusercontent.com/agricolamz/2019_data_analysis_for_linguists/master/data/students/tatianamamonova/hw3_Bayesian_inference/hw3_task_3.csv") %>% 
+  mutate(a_apost = a+33) %>% 
+  mutate(b_apost = b+77)
+bayes_upd <- df$a_apost/(df$a_apost+df$b_apost)
+bayes_upd
+```
