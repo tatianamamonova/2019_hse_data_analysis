@@ -1,0 +1,41 @@
+---
+title: "hw_4"
+author: "Tatiana Mamonova"
+date: '20 марта 2019 г '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## 4.1
+```{r }
+df <- read.csv('https://raw.githubusercontent.com/agricolamz/2019_data_analysis_for_linguists/master/data/students/tatianamamonova/hw4_Advanced_Bayesian/hw4_caretta.csv')
+sd_prior <- sd(df$vowel.dur)
+mean_prior <- mean(df$vowel.dur, trim = 0.1)
+df %>%
+  filter(speaker=='brs02') ->
+  brs02
+sd_df <- sd(brs02$vowel.dur)
+mean_df <- mean(brs02$vowel.dur)
+sd_posterior <- (1/sd_prior + 1/sd_df)^(-1)
+mean_posterior <- weighted.mean(c(mean_prior, mean_df), c(1/sd_prior, 1/sd_df))
+data.frame(sd_posterior, mean_posterior)
+```
+
+## 4.2
+```{r pressure, echo=FALSE}
+df %>%
+  filter(speaker=='tt01') ->
+  tt01
+sd_df <- sd(tt01$vowel.dur)
+mean_df <- mean(tt01$vowel.dur)
+sd_posterior <- (1/sd_prior + 1/sd_df)^(-1)
+mean_posterior <- weighted.mean(c(mean_prior, mean_df), c(1/sd_prior, 1/sd_df))
+data.frame(qnorm(c(0.025, 0.975), mean = mean_posterior, sd = sd_posterior))
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
