@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
-df <- read.csv('hw2_phoible.csv')
+df <- read.csv('https://raw.githubusercontent.com/agricolamz/2019_data_analysis_for_linguists/master/data/students/tatianamamonova/hw2_Bayesian_inference/hw2_phoible.csv')
 ```
 
 ##2.1
